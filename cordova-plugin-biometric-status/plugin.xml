@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-biometric-status"
+        version="1.0.0">
+
+  <name>BiometricStatus</name>
+  <description>Silent biometric status check (no prompt) using androidx BiometricManager on Android and LAContext on iOS</description>
+
+  <js-module src="www/BiometricStatus.js" name="BiometricStatus">
+    <clobbers target="BiometricStatus" />
+  </js-module>
+
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="BiometricStatus">
+        <param name="android-package" value="cordova.plugin.biometricstatus.BiometricStatus" />
+      </feature>
+    </config-file>
+
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    </config-file>
+
+    <framework src="androidx.biometric:biometric:1.1.0" />
+
+    <source-file src="src/android/BiometricStatus.java"
+                 target-dir="src/cordova/plugin/biometricstatus" />
+  </platform>
+
+  <platform name="ios">
+    <config-file target="config.xml" parent="/*">
+      <feature name="BiometricStatus">
+        <param name="ios-package" value="BiometricStatus" />
+      </feature>
+    </config-file>
+
+    <!--
+      NSFaceIDUsageDescription is deliberately not declared here. This plugin
+      only reads biometric state (canEvaluatePolicy), it never evaluates a
+      policy, so it does not need the key on its own. Declaring it here would
+      also collide with any other installed plugin that writes the same
+      Info.plist key: whichever plugin is installed last would win, and the
+      app would ship an arbitrary usage string. See the README for how to
+      declare it once, in your own app's config.xml.
+    -->
+
+    <header-file src="src/ios/Bridging-Header.h" type="BridgingHeader" />
+    <source-file src="src/ios/BiometricStatus.swift" />
+
+    <framework src="LocalAuthentication.framework" />
+  </platform>
+</plugin>

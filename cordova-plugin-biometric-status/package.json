@@ -1,0 +1,50 @@
+{
+  "name": "cordova-plugin-biometric-status",
+  "version": "1.0.0",
+  "description": "Silent biometric availability check (no prompt) for Cordova on Android and iOS",
+  "cordova": {
+    "id": "cordova-plugin-biometric-status",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahakyan-tigran/cordova-plugin-biometric-status.git"
+  },
+  "homepage": "https://github.com/sahakyan-tigran/cordova-plugin-biometric-status#readme",
+  "bugs": {
+    "url": "https://github.com/sahakyan-tigran/cordova-plugin-biometric-status/issues"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "biometric",
+    "biometrics",
+    "fingerprint",
+    "touchid",
+    "faceid",
+    "BiometricManager",
+    "LocalAuthentication"
+  ],
+  "author": "Tigran Sahakyan (https://github.com/sahakyan-tigran)",
+  "license": "MIT",
+  "files": [
+    "www/",
+    "src/",
+    "plugin.xml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "cordovaDependencies": {
+      "1.0.0": {
+        "cordova-android": ">=9.0.0",
+        "cordova-ios": ">=6.0.0"
+      }
+    }
+  }
+}
