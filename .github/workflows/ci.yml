@@ -9,9 +9,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
 
@@ -32,8 +32,20 @@ jobs:
             console.log('version ' + pkg.version + ' consistent');
           "
 
+      # Uses Python's built-in parser rather than xmllint: libxml2-utils is not
+      # preinstalled on the ubuntu-24.04 runner image, but Python 3.12 is.
       - name: plugin.xml is well-formed
-        run: xmllint --noout plugin.xml
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse('plugin.xml').getroot()
+          tag = root.tag.rsplit('}', 1)[-1]
+          if tag != 'plugin':
+              raise SystemExit('root element is <%s>, expected <plugin>' % tag)
+          print('plugin.xml is well-formed: <plugin id=%s version=%s>'
+                % (root.get('id'), root.get('version')))
+          PY
 
       - name: every file referenced by plugin.xml exists
         run: |
