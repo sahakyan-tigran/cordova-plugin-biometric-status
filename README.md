@@ -1,4 +1,4 @@
-# cordova-plugin-biometric-status
+# Cordova Plugin Biometric Status
 
 Ask the device whether biometrics are usable **without showing a prompt**.
 
@@ -41,6 +41,8 @@ The plugin clobbers `window.BiometricStatus` and is ready after `deviceready`. B
 methods return a Promise when called without callbacks, and accept
 `(success, error)` callbacks when you prefer those.
 
+TypeScript definitions ship with the plugin; no `@types` package is needed.
+
 ```js
 document.addEventListener('deviceready', function () {
   BiometricStatus.check().then(function (result) {
@@ -74,7 +76,7 @@ ignored there.
 | `status` | both | The cross-platform value below. The only field worth branching on. |
 | `code` | both | The raw native value behind `status` (`BiometricManager` code on Android, `LAError` code on iOS). Useful in logs. |
 | `sdk` | Android | `Build.VERSION.SDK_INT`. |
-| `biometry` | iOS | `'face'`, `'finger'`, `'none'` or `'unknown'`. |
+| `biometry` | iOS | `'face'`, `'finger'`, `'optic'`, `'none'` or `'unknown'`. |
 | `message` | iOS | The system's own description, when it supplied one. |
 
 **`status` values**

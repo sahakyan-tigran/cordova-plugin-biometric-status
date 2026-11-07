@@ -35,7 +35,8 @@ module.exports = {
    *   unsupported                the requested strength is not supported
    *   error                      unmapped BiometricManager code
    *
-   * iOS only (plus "biometry": "face" | "finger" | "none" | "unknown", and
+   * iOS only (plus "biometry": "face" | "finger" | "optic" | "none" |
+   * "unknown", and
    * "message" when the system supplied one):
    *   unavailable        no sensor, OR the user denied biometry for this app --
    *                      iOS reports both with the same LAError code

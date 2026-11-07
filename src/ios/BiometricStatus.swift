@@ -97,6 +97,16 @@ import UIKit
     }
 
     private static func toBiometry(_ type: LABiometryType) -> String {
+        // Optic ID (Vision Pro) was added in iOS 17. The compiler check keeps
+        // the plugin building against older SDKs, where the case does not
+        // exist; the availability check keeps it from being used on older
+        // runtimes.
+        #if compiler(>=5.9)
+        if #available(iOS 17.0, *), type == .opticID {
+            return "optic"
+        }
+        #endif
+
         switch type {
         case .faceID:  return "face"
         case .touchID: return "finger"

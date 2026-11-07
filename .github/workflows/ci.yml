@@ -1,0 +1,77 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:        # adds the "Run workflow" button on the Actions tab
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: package.json is valid and its version matches plugin.xml
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const xml = fs.readFileSync('plugin.xml', 'utf8');
+            const m = xml.match(/<plugin[^>]*\sversion=\"([^\"]+)\"/);
+            if (!m) { throw new Error('no version attribute in plugin.xml'); }
+            if (m[1] !== pkg.version) {
+              throw new Error('version mismatch: package.json ' + pkg.version + ' vs plugin.xml ' + m[1]);
+            }
+            if (pkg.cordova.id !== pkg.name) {
+              throw new Error('cordova.id does not match the package name');
+            }
+            console.log('version ' + pkg.version + ' consistent');
+          "
+
+      - name: plugin.xml is well-formed
+        run: xmllint --noout plugin.xml
+
+      - name: every file referenced by plugin.xml exists
+        run: |
+          node -e "
+            const fs = require('fs');
+            const xml = fs.readFileSync('plugin.xml', 'utf8');
+            // src= only: target-dir is a path inside the generated native
+            // project, not a path in this repository.
+            const refs = [...xml.matchAll(/\ssrc=\"([^\"]+)\"/g)]
+              .map(m => m[1])
+              .filter(p => p.startsWith('src/') || p.startsWith('www/'));
+            let bad = 0;
+            for (const ref of refs) {
+              if (!fs.existsSync(ref)) { console.error('missing: ' + ref); bad++; }
+            }
+            if (bad) { process.exit(1); }
+            console.log(refs.length + ' referenced files present');
+          "
+
+      - name: the plugin JS parses and exposes both methods
+        run: |
+          node -e "
+            const Module = require('module');
+            const original = Module._load;
+            Module._load = function (request, parent, isMain) {
+              if (request === 'cordova/exec') { return function () {}; }
+              return original.apply(this, arguments);
+            };
+            const plugin = require('./www/BiometricStatus.js');
+            for (const name of ['check', 'openSettings']) {
+              if (typeof plugin[name] !== 'function') {
+                throw new Error('missing export: ' + name);
+              }
+            }
+            console.log('www/BiometricStatus.js exports check and openSettings');
+          "
+
+      - name: type definitions compile
+        run: |
+          npm install --no-save typescript@5.6.3
+          npx tsc --noEmit --strict --lib es2015,dom types/index.d.ts

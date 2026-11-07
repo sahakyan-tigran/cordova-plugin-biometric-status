@@ -14,3 +14,5 @@ Initial release.
 - `openSettings()` — biometric enrollment screen on Android, the app's settings page on
   iOS.
 - Android 16 `BIOMETRIC_ERROR_NOT_ENABLED_FOR_APPS` mapped to `not_enabled_for_apps`.
+- Optic ID (Vision Pro, iOS 17+) reported as `biometry: 'optic'`.
+- TypeScript definitions in `types/index.d.ts`.
